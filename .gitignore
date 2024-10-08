@@ -1,0 +1,8 @@
+# Ignore squash files
+*.squash
+
+# Ignore out files
+*.out
+
+#
+/megatron-lm/enroot_pyxis/gpt2/*
