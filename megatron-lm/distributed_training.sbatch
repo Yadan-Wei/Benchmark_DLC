@@ -8,6 +8,7 @@
 #SBATCH --exclusive # job has exclusive use of the resource, no sharing
 #SBATCH --wait-all-nodes=1
 
+
 set -ex;
 
 ###########################
@@ -21,19 +22,19 @@ set -ex;
 # Model parameters, defaults to 39B model
 # Refer to page 8 of this paper on how to tune models parameters
 # https://arxiv.org/pdf/2104.04473.pdf
-: "${NUM_LAYERS:=36}"
-: "${HIDDEN_SIZE:=4096}"
-: "${NUM_ATTENTION_HEADS:=32}"
+: "${NUM_LAYERS:=24}"
+: "${HIDDEN_SIZE:=1024}"
+: "${NUM_ATTENTION_HEADS:=16}"
 
 : "${SEQ_LENGTH:=2048}"
 : "${MAX_POSITION_EMBEDDINGS:=2048}"
 : "${MICRO_BATCH_SIZE:=1}"
-: "${GLOBAL_BATCH_SIZE:=288}"
+: "${GLOBAL_BATCH_SIZE:= $((8*$NUM_NODES))}"
 
-# default variables for Enroot
-: "${IMAGE:=$(pwd)/megatron-training-dlc.sqsh}"
+# # default variables for Enroot
+# : "${IMAGE:=$(pwd)/megatron-training-dlc.sqsh}"
 : "${DATA_PATH:=/fsx}"
-: "${FSX_MOUNT:=$(pwd):$DATA_PATH}"
+: "${FSX_MOUNT:=${MODEL_DATASET_DIR}:$DATA_PATH}"
 
 ###########################
 ## Environment Variables ##
@@ -53,7 +54,7 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 #########################
 
 declare -a ARGS=(
-    --container-image $IMAGE
+    --container-image ${IMAGE_DIR}/${TAG}.sqsh
     --container-mounts $FSX_MOUNT
     --container-name megatron-training
 )
@@ -104,23 +105,25 @@ fi
 srun ${AUTO_RESUME} -l "${ARGS[@]}" python -m torch.distributed.run "${TORCHRUN_ARGS[@]}" /workspace/Megatron-LM/pretrain_gpt.py \
         "${MEGATRON_PARALLELISM[@]}" \
         "${MEGATRON_ARGS[@]}" \
-        --train-samples 146484375 \
-        --lr-decay-samples 126953125 \
-        --lr-warmup-samples 183105 \
-        --lr 6.0e-5 \
-        --min-lr 6.0e-6 \
+        --train-iters 1200 \
+        --distributed-backend nccl \
+        --lr-decay-iters 320000 \
+        --lr-warmup-fraction .01 \
+        --lr 0.00015 \
+        --min-lr 1.0e-5 \
         --lr-decay-style cosine \
-        --log-interval 1 \
-        --eval-iters 40 \
+        --log-interval 100 \
+        --eval-iters 10 \
         --eval-interval 1000 \
-        --data-path "${DATA_PATH}/gpt2/my-gpt2_text_document" \
-        --vocab-file "${DATA_PATH}/gpt2/gpt2-vocab.json" \
-        --merge-file "${DATA_PATH}/gpt2/gpt2-merges.txt" \
-        --split 98,2,0 \
+        --save-interval 10000 \
+        --data-path "${DATA_PATH}/my-gpt2_text_document/my-gpt2_text_document" \
+        --vocab-file "${DATA_PATH}/gpt2-vocab.json" \
+        --merge-file "${DATA_PATH}/gpt2-merges.txt" \
+        --split 949,50,1 \
         --clip-grad 1.0 \
-        --weight-decay 0.1 \
+        --weight-decay 1e-2 \
         --adam-beta1 0.9 \
         --adam-beta2 0.95 \
         --init-method-std 0.006 \
-        --fp16 \
-        --recompute-activations
+        --bf16 \
+        --recompute-activations 

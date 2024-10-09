@@ -10,10 +10,10 @@ METRIC='elapsed time per iteration (ms):'
 BATCH_SIZE='global batch size:'
 
 NUM_NODES = 0
-FLAVOR = ""
-PYTHON_VERSION = ""
-PYTORCH_VERSION = ""
-CUDA_VERSION = ""
+# FLAVOR = ""
+# PYTHON_VERSION = ""
+# PYTORCH_VERSION = ""
+# CUDA_VERSION = ""
 THROUGHPUT_TARGET = ""
 ALLOWED_THROUGHPUT_VARIATION_PERCENTAGE = ""
 
@@ -88,10 +88,10 @@ def parse_log(log_file, metrics_dir_path):
     results = {
         "log_file": log_file,
         "num_nodes": NUM_NODES,
-        "flavor": FLAVOR,
-        "python_version": PYTHON_VERSION,
-        "pytorch_version": PYTORCH_VERSION,
-        "cuda_version": CUDA_VERSION,
+        # "flavor": FLAVOR,
+        # "python_version": PYTHON_VERSION,
+        # "pytorch_version": PYTORCH_VERSION,
+        # "cuda_version": CUDA_VERSION,
         "nccl_version": nccl_version,
         "network": network,
         "ofi_version": ofi_version,
@@ -125,18 +125,18 @@ if __name__ == '__main__':
     parser.add_argument('--log_file', metavar='PATH', required=True, help='the path to log file')
     parser.add_argument('--metrics_dir_path', metavar='PATH', required=True, help='the path to the directory where json results should be written')
     parser.add_argument('--num_nodes', type=int, metavar='NUM', required=True, help='the number of nodes used to train')
-    parser.add_argument('--flavor', metavar='aws|oss|oss+efa', required=True, help='the flavor of pytorch used')
-    parser.add_argument('--python_version', metavar='VERSION', required=True, help='the python version used') 
-    parser.add_argument('--pytorch_version', metavar='VERSION', required=True, help='the pytorch version used')     
-    parser.add_argument('--cuda_version', metavar='VERSION', required=True, help='the cuda version used')  
+    # parser.add_argument('--flavor', metavar='aws|oss|oss+efa', required=True, help='the flavor of pytorch used')
+    # parser.add_argument('--python_version', metavar='VERSION', required=True, help='the python version used') 
+    # parser.add_argument('--pytorch_version', metavar='VERSION', required=True, help='the pytorch version used')     
+    # parser.add_argument('--cuda_version', metavar='VERSION', required=True, help='the cuda version used')  
     parser.add_argument('--target_throughput', required=False, help='target throughput number to check')  
     parser.add_argument('--allowed_throughput_variance_percentage', required=False, help='percentage of variation allowed for the thoughtput')  
     args = parser.parse_args()
     NUM_NODES = args.num_nodes
-    FLAVOR = args.flavor
-    PYTHON_VERSION = args.python_version
-    PYTORCH_VERSION = args.pytorch_version
-    CUDA_VERSION = args.cuda_version
+    # FLAVOR = args.flavor
+    # PYTHON_VERSION = args.python_version
+    # PYTORCH_VERSION = args.pytorch_version
+    # CUDA_VERSION = args.cuda_version
     if args.target_throughput and args.allowed_throughput_variance_percentage:
         THROUGHPUT_TARGET = float(args.target_throughput)
         ALLOWED_THROUGHPUT_VARIATION_PERCENTAGE = float(args.allowed_throughput_variance_percentage)
