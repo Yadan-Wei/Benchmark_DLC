@@ -3,7 +3,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-#SBATCH --nodes=2 # number of nodes to use, 2 p4d(e) = 16 A100 GPUs
+
 #SBATCH --job-name=megatron_gpt # name of your job
 #SBATCH --exclusive # job has exclusive use of the resource, no sharing
 #SBATCH --wait-all-nodes=1

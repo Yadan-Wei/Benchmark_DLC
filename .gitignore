@@ -1,6 +1,6 @@
 # Ignore squash files
-/images/*
+images/*
 
 # Ignore out files
-/logs/*
+logs/*
 
