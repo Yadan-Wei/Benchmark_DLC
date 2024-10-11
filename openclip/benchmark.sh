@@ -36,7 +36,7 @@ export LOG_FILE_NAME="train_${MODEL}_${TAG}_${INSTANCE_TYPE}_${NUM_NODES}nodes_$
 # ===================================================
 echo "Check training logs at: ${METRICS_DIR_PATH}"
 # --nodes=2 # number of nodes to use, 2 p4d(e) = 16 A100 GPUs
-JOB_ID=$(sbatch --nodes=$NUM_NODES --partition="queue2" --output ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.out --error ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.err distributed_training.sbatch | awk '{print $4}')
+JOB_ID=$(sbatch --nodes=$NUM_NODES --partition="queue1" --output ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.out --error ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.err distributed_training.sbatch | awk '{print $4}')
 
 if [ -n "$JOB_ID" ]; then
     echo "Training Job submitted with ID: $JOB_ID"
