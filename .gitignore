@@ -4,3 +4,7 @@ images/*
 # Ignore out files
 logs/*
 
+/cc12m/*
+
+/open_clip/*
+

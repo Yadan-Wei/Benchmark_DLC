@@ -10,7 +10,10 @@ export DATA_DIR="/fsx/dataset"
 export IMAGE_DIR="$(pwd)/images"
 export METRICS_DIR_PATH="$(pwd)/logs"
 
-MODELS=("megatron-lm")
+MODELS=(
+        #"megatron-lm",
+        "openclip"
+        )
 
 # ===================================================
 # pull image
