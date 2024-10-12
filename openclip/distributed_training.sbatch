@@ -22,9 +22,9 @@ set -ex;
 # https://github.com/pytorch/pytorch/issues/68893
 # need use ifconfig to check host node interface and change here accordingly
 # p4d: ens  p548:enp
-export NCCL_SOCKET_IFNAME=ens
+export NCCL_SOCKET_IFNAME=enp
 export NCCL_DEBUG=INFO
-export LOGLEVEL=INFO
+# export LOGLEVEL=INFO
 export CUDA_LAUNCH_BLOCKING=0
 export FI_EFA_SET_CUDA_SYNC_MEMOPS=0
 export NCCL_BUFFSIZE=8388608
@@ -84,4 +84,4 @@ srun -l "${ARGS[@]}" torchrun -m "${TORCHRUN_ARGS[@]}" open_clip_train.main \
     --workers 4 \
     --dataset-resampled \
     --log-every-n-steps 10 \
-    --epochs=100 
+    --epochs=5 2>&1

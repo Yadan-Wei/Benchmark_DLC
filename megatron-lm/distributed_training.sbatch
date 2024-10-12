@@ -126,4 +126,4 @@ srun ${AUTO_RESUME} -l "${ARGS[@]}" python -m torch.distributed.run "${TORCHRUN_
         --adam-beta2 0.95 \
         --init-method-std 0.006 \
         --bf16 \
-        --recompute-activations 
+        --recompute-activations 2>&1
