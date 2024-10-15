@@ -76,9 +76,9 @@ declare -a TORCHRUN_ARGS=(
 
 
 srun -l "${ARGS[@]}" torchrun -m "${TORCHRUN_ARGS[@]}" open_clip_train.main \
-    --train-data "${DATA_PATH}/${DATA_SOURCE}/{00000..00331}.tar" \
-    --train-num-samples 4096000 \
+    --train-data "${DATA_PATH}/${DATA_SOURCE}/{00000..01242}.tar" \
     --save-frequency 1 \
+    --train-num-samples 12423374 \
     --dataset-type webdataset \
     --batch-size 320 \
     --warmup 2000 \
@@ -89,3 +89,6 @@ srun -l "${ARGS[@]}" torchrun -m "${TORCHRUN_ARGS[@]}" open_clip_train.main \
     --dataset-resampled \
     --log-every-n-steps 10 \
     --epochs=1 2>&1
+
+
+    
