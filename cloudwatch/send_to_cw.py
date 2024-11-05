@@ -6,6 +6,9 @@ import cloudwatch_markdown as md
 from datetime import datetime
 
 
+## comments add instance type/ add image sha/ compare with other opensource image
+
+
 cloudwatch = boto3.client('cloudwatch', region_name='us-west-2')
 # parameters we need to configure
 # parameters = {'docker_image':"",'num_nodes':"",}
@@ -14,6 +17,9 @@ cloudwatch = boto3.client('cloudwatch', region_name='us-west-2')
 # experiment_para_value = set()
 
 docker_image = ""
+num_nodes=0
+image_sha=""
+instance_type=""
 
 # # the namespace to send metrics data to
 # namespace="experiment"
@@ -29,7 +35,7 @@ def generate_table_rows(metrics_dir_path):
     each result. Output as a list of lists. 
     '''
     experiment_table_rows = []
-    global docker_image
+    global docker_image, num_nodes, image_sha, instance_type
     
     # the header rows 
     files = [f for f in os.listdir(metrics_dir_path) if os.path.isfile(os.path.join(metrics_dir_path, f)) and f.endswith('.metrics.json')]
@@ -48,6 +54,12 @@ def generate_table_rows(metrics_dir_path):
 
             if not docker_image:
                 docker_image=data["image"]
+            if not num_nodes:
+                num_nodes=data["num_nodes"]
+            if not image_sha:
+                image_sha=data["image_sha"]
+            if not instance_type:
+                instance_type=data["instance_type"]
                 
 
     # sort all rows to keep the same model together               
@@ -70,11 +82,11 @@ def update_dashboard(job_name, table_rows):
     markdown = md.dumps(
         md.h1(job_name) + \
         [""] + \
-        md.h3("DLC image") + \
+        md.h3("Benchmark Setting") + \
         md.table(
             # . just for table pretty 
-            headers=[".","Image",],
-            rows = [[".",docker_image,]]
+            headers=["Instance","Nodes","Image","Image Digest"],
+            rows = [[instance_type, num_nodes,docker_image,image_sha]]
         ) + \
         [""] + \
         md.h3("Results") + \

@@ -2,10 +2,10 @@
 
 set -ex;
 
-export INSTANCE_TYPE="p4d"
+
 export TIMESTAMP=$(date '+%Y-%m-%d-%H-%M-%S')
 export JOB_DIR="$(pwd)"
-export NUM_NODES=2
+
 export MODEL_DATASET_DIR=$DATA_DIR/$MODEL
 export DATA_SOURCE="cc12m"
 

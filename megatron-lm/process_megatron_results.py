@@ -14,6 +14,7 @@ NUM_NODES = 0
 # PYTHON_VERSION = ""
 # PYTORCH_VERSION = ""
 # CUDA_VERSION = ""
+IMAGE=""
 THROUGHPUT_TARGET = ""
 ALLOWED_THROUGHPUT_VARIATION_PERCENTAGE = ""
 
@@ -88,6 +89,7 @@ def parse_log(log_file, metrics_dir_path):
     results = {
         "log_file": log_file,
         "num_nodes": NUM_NODES,
+        "image":IMAGE,
         # "flavor": FLAVOR,
         # "python_version": PYTHON_VERSION,
         # "pytorch_version": PYTORCH_VERSION,
@@ -102,7 +104,8 @@ def parse_log(log_file, metrics_dir_path):
                 "iter_time": iter_time,
                 "average_iter_time": average_iter_time,
                 "throughput": throughput,
-                "tflops": tflops
+                "tflops": tflops,
+                "measure": "tokens/s"
             }
         }
     }
@@ -125,6 +128,7 @@ if __name__ == '__main__':
     parser.add_argument('--log_file', metavar='PATH', required=True, help='the path to log file')
     parser.add_argument('--metrics_dir_path', metavar='PATH', required=True, help='the path to the directory where json results should be written')
     parser.add_argument('--num_nodes', type=int, metavar='NUM', required=True, help='the number of nodes used to train')
+    parser.add_argument('--image', type=str, required=True, help='the docker image use to train model')
     # parser.add_argument('--flavor', metavar='aws|oss|oss+efa', required=True, help='the flavor of pytorch used')
     # parser.add_argument('--python_version', metavar='VERSION', required=True, help='the python version used') 
     # parser.add_argument('--pytorch_version', metavar='VERSION', required=True, help='the pytorch version used')     
@@ -133,6 +137,7 @@ if __name__ == '__main__':
     parser.add_argument('--allowed_throughput_variance_percentage', required=False, help='percentage of variation allowed for the thoughtput')  
     args = parser.parse_args()
     NUM_NODES = args.num_nodes
+    IMAGE=args.image
     # FLAVOR = args.flavor
     # PYTHON_VERSION = args.python_version
     # PYTORCH_VERSION = args.pytorch_version

@@ -6,9 +6,19 @@ set -ex;
 
 export TIMESTAMP=$(date '+%Y-%m-%d-%H-%M-%S')
 export JOB_DIR="$(pwd)"
-export INSTANCE_TYPE="p4d"
-export NUM_NODES=2
 export MODEL_DATASET_DIR=$DATA_DIR/$MODEL
+
+case "${INSTANCE_TYPE}" in
+    p4d)
+    PARTITION="queue1"
+    ;;
+    p5)
+    PARTITION="queue2"
+    ;;
+    *)
+    PARTITION="queue1"
+    ;;
+esac
 
 # ===================================================
 # Get Dataset
@@ -26,7 +36,7 @@ export LOG_FILE_NAME="train_${MODEL}_${TAG}_${INSTANCE_TYPE}_${NUM_NODES}nodes_$
 # ===================================================
 echo "Check training logs at: ${METRICS_DIR_PATH}"
 # --nodes=2 # number of nodes to use, 2 p4d(e) = 16 A100 GPUs
-JOB_ID=$(sbatch --nodes=$NUM_NODES  --output ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.out distributed_training.sbatch | awk '{print $4}')
+JOB_ID=$(sbatch --nodes=$NUM_NODES  --partition=${PARTITION} --output ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_%j.out distributed_training.sbatch | awk '{print $4}')
 
 if [ -n "$JOB_ID" ]; then
     echo "Training Job submitted with ID: $JOB_ID"

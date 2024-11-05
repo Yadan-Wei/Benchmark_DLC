@@ -13,6 +13,9 @@ TOKENS='tokens_per_sample='
 SKIP=5
 
 NUM_NODES = 0
+IMAGE= ""
+IMAGE_SHA = ""
+INSTANCE_TYPE = ""
 
 
 def parse_log(log_file_path, metrics_dir_path):
@@ -39,11 +42,16 @@ def parse_log(log_file_path, metrics_dir_path):
         sample_per_sec_per_gpu[k] = mean(v[1:])
 
     results = {
+        "image": IMAGE,
         "num_nodes": NUM_NODES,
+        "image_sha": IMAGE_SHA,
+        "instance_type": INSTANCE_TYPE,
         "model": {
             "name": "openclip",
             "perf_metrics": {
-               "average_sample_per_sec_per_gpu": mean(list(sample_per_sec_per_gpu.values()))
+               "average_sample_per_sec_per_gpu": mean(list(sample_per_sec_per_gpu.values())),
+               "throughput": mean(list(sample_per_sec_per_gpu.values()))*NUM_NODES*8,
+               "measure": "text and image pairs/s"
             }
         }
     }
@@ -61,6 +69,12 @@ if __name__ == '__main__':
     parser.add_argument('--log_file_path', metavar='PATH', required=True)
     parser.add_argument('--metrics_dir_path', metavar='PATH', required=True)
     parser.add_argument('--num_nodes', type=int, metavar='NUM', required=True, help='the number of nodes used to train')
+    parser.add_argument('--image', type=str, required=True, help='the docker image use to train model')
+    parser.add_argument('--image_sha', type=str, required=True, help='the sha256 of image to identify image version')
+    parser.add_argument("--instance_type", type-str, required=True, help='the instance type to do the training')
     args = parser.parse_args()
     NUM_NODES = args.num_nodes
+    IMAGE = args.image
+    IMAGE_SHA = args.image_sha
+    INSTANCE_TYPE=args.instance_type
     parse_log(args.log_file_path, args.metrics_dir_path)
