@@ -43,6 +43,7 @@ JOB_ID_2=$(sbatch --dependency=afterok:$JOB_ID_1 --kill-on-invalid-dep=yes --nod
 # Process Benchmarking Result
 # ===================================================
 
-sbatch --dependency=afterok:$JOB_ID_2 --kill-on-invalid-dep=yes --partition=${PARTITION} --output ${METRICS_DIR_PATH}/process_${LOG_FILE_NAME}_%j.out process_openclip_results.sh $JOB_ID_2
+JOB_ID_3=$(sbatch --dependency=afterok:$JOB_ID_2 --kill-on-invalid-dep=yes --partition=${PARTITION} --output ${METRICS_DIR_PATH}/process_${LOG_FILE_NAME}_%j.out process_openclip_results.sh $JOB_ID_2 | awk '{print $4}')
+echo ${JOB_ID_3} >> ${METRICS_DIR_PATH}/job_list.txt
 
 

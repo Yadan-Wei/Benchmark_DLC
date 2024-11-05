@@ -16,9 +16,7 @@ cloudwatch = boto3.client('cloudwatch', region_name='us-west-2')
 # # variable to store all value of experiment parameter
 # experiment_para_value = set()
 
-docker_image = ""
 num_nodes=0
-image_sha=""
 instance_type=""
 
 # # the namespace to send metrics data to
@@ -48,22 +46,20 @@ def generate_table_rows(metrics_dir_path):
                 data['model']['name'],
                 round(data['model']['perf_metrics']['throughput']),
                 data['model']['perf_metrics']['measure']
+                data['image']
+                data['image_sha']
             ]
            
             experiment_table_rows.append(experiment_row)
 
-            if not docker_image:
-                docker_image=data["image"]
             if not num_nodes:
                 num_nodes=data["num_nodes"]
-            if not image_sha:
-                image_sha=data["image_sha"]
             if not instance_type:
                 instance_type=data["instance_type"]
                 
 
     # sort all rows to keep the same model together               
-    # experiment_table_rows.sort(key=lambda x: (x[1], x[0]))
+    experiment_table_rows.sort(key=lambda x: (x[1], x[0]))
     return experiment_table_rows
 
 
@@ -76,7 +72,7 @@ def update_dashboard(job_name, table_rows):
     dashboard_body = json.loads(response['DashboardBody'])
   
     
-    result_headers = ["Model Name", "Throughput", "Measure"]
+    result_headers = ["Model Name", "Throughput", "Measure", "Image", "ImageDigest"]
     
     # generate markdown used in text widget
     markdown = md.dumps(
@@ -85,8 +81,8 @@ def update_dashboard(job_name, table_rows):
         md.h3("Benchmark Setting") + \
         md.table(
             # . just for table pretty 
-            headers=["Instance","Nodes","Image","Image Digest"],
-            rows = [[instance_type, num_nodes,docker_image,image_sha]]
+            headers=["Instance","Nodes"],
+            rows = [[instance_type, num_nodes]]
         ) + \
         [""] + \
         md.h3("Results") + \

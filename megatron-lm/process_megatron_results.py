@@ -141,7 +141,7 @@ if __name__ == '__main__':
     parser.add_argument('--target_throughput', required=False, help='target throughput number to check')  
     parser.add_argument('--allowed_throughput_variance_percentage', required=False, help='percentage of variation allowed for the thoughtput')
     parser.add_argument('--image_sha', type=str, required=True, help='the sha256 of image to identify image version')
-    parser.add_argument("--instance_type", type-str, required=True, help='the instance type to do the training')  
+    parser.add_argument("--instance_type", type=str, required=True, help='the instance type to do the training')  
     args = parser.parse_args()
     NUM_NODES = args.num_nodes
     IMAGE=args.image

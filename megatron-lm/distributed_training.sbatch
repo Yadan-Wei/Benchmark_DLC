@@ -42,7 +42,14 @@ set -ex;
 
 # https://discuss.pytorch.org/t/nccl-network-is-unreachable-connection-refused-when-initializing-ddp/137352
 # https://github.com/pytorch/pytorch/issues/68893
-export NCCL_SOCKET_IFNAME=ens
+# need use ifconfig to check host node interface and change here accordingly
+# p4d: ens  p548:enp
+if [ "${INSTANCE_TYPE}" = "p4d" ]; then
+    export NCCL_SOCKET_IFNAME=ens
+elif [ "${INSTANCE_TYPE}" = "p5" ]; then
+    export NCCL_SOCKET_IFNAME=enp
+fi
+
 export NCCL_ASYNC_ERROR_HANDLING=1
 export NCCL_DEBUG=INFO
 
@@ -56,7 +63,7 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 declare -a ARGS=(
     --container-image ${IMAGE_DIR}/${TAG}.sqsh
     --container-mounts $FSX_MOUNT
-    --container-name megatron-training
+    --container-name megatron-training-${TAG}
 )
 
 #####################

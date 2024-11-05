@@ -45,7 +45,7 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 declare -a ARGS=(
     --container-image ${IMAGE_DIR}/${TAG}.sqsh
     --container-mounts $FSX_MOUNT
-    --container-name openclip-training
+    --container-name openclip-training-${TAG}
 )
 
 #####################
