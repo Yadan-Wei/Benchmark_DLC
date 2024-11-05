@@ -8,4 +8,6 @@ python process_megatron_results.py \
     --log_file ${METRICS_DIR_PATH}/${LOG_FILE_NAME}_${JOB_ID}.out \
     --metrics_dir_path ${METRICS_DIR_PATH} \
     --num_nodes ${NUM_NODES} \
-    --image ${IMAGE}
+    --image ${IMAGE} \
+    --image_sha ${IMAGE_SHA} \
+    --instance_type ${INSTANCE_TYPE}

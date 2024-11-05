@@ -15,6 +15,8 @@ NUM_NODES = 0
 # PYTORCH_VERSION = ""
 # CUDA_VERSION = ""
 IMAGE=""
+IMAGE_SHA=""
+INSTANCE_TYPE=""
 THROUGHPUT_TARGET = ""
 ALLOWED_THROUGHPUT_VARIATION_PERCENTAGE = ""
 
@@ -44,6 +46,7 @@ def parse_log(log_file, metrics_dir_path):
     ofi_version = ""
     iter_time = []
     batch_size = ""
+
     with open(log_file, 'r', errors='ignore') as f:
         lines = f.readlines();
         for line in lines:
@@ -90,6 +93,8 @@ def parse_log(log_file, metrics_dir_path):
         "log_file": log_file,
         "num_nodes": NUM_NODES,
         "image":IMAGE,
+        "image_sha": IMAGE_SHA,
+        "instance_type": INSTANCE_TYPE,
         # "flavor": FLAVOR,
         # "python_version": PYTHON_VERSION,
         # "pytorch_version": PYTORCH_VERSION,
@@ -134,10 +139,14 @@ if __name__ == '__main__':
     # parser.add_argument('--pytorch_version', metavar='VERSION', required=True, help='the pytorch version used')     
     # parser.add_argument('--cuda_version', metavar='VERSION', required=True, help='the cuda version used')  
     parser.add_argument('--target_throughput', required=False, help='target throughput number to check')  
-    parser.add_argument('--allowed_throughput_variance_percentage', required=False, help='percentage of variation allowed for the thoughtput')  
+    parser.add_argument('--allowed_throughput_variance_percentage', required=False, help='percentage of variation allowed for the thoughtput')
+    parser.add_argument('--image_sha', type=str, required=True, help='the sha256 of image to identify image version')
+    parser.add_argument("--instance_type", type-str, required=True, help='the instance type to do the training')  
     args = parser.parse_args()
     NUM_NODES = args.num_nodes
     IMAGE=args.image
+    IMAGE = args.image
+    IMAGE_SHA = args.image_sha
     # FLAVOR = args.flavor
     # PYTHON_VERSION = args.python_version
     # PYTORCH_VERSION = args.pytorch_version
