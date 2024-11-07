@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-
-
 export DATA_DIR="/fsx/dataset"
 export IMAGE_DIR="$(pwd)/images"
 export METRICS_DIR_PATH="$(pwd)/logs"
@@ -17,19 +14,10 @@ export MODELS=(
 
 export IMAGE_SOURCE=(
         "DLC"
-        #"NGC"
+        "NGC"
 )
 
-# export DLC_REGISTRY="763104351884.dkr.ecr.us-west-2.amazonaws.com"
-# export DLC_REPO="pytorch-training"
-# export DLC_TAG="2.4.0-gpu-py311-cu124-ubuntu22.04-ec2"
-
-
-# export NGC_REGISTRY="nvcr.io"
-# export NGC_REPO="nvidia/pytorch"
-# export NGC_TAG="24.05-py3"
-
-
+# function to get tag, repo etc info of an image
 get_image_info() {
     source="$1"
     case "$source" in
@@ -50,8 +38,23 @@ get_image_info() {
     esac
 }
 
+# pick pcluster queue based on instance type 
+# for arm we need to relaunch a cluster with arm instance
+case "${INSTANCE_TYPE}" in
+    p4d)
+    PARTITION="queue1"
+    ;;
+    p5)
+    PARTITION="queue2"
+    ;;
+    *)
+    PARTITION="queue1"
+    ;;
+esac
 
-SEND_TO_CLOUDWATCH="True"
+export PARTITION
+
+export SEND_TO_CLOUDWATCH="True"
 
 # https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-24-05.html
 # Ubuntu 22.04 including Python 3.10

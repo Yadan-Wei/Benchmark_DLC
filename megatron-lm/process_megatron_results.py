@@ -147,6 +147,7 @@ if __name__ == '__main__':
     IMAGE=args.image
     IMAGE = args.image
     IMAGE_SHA = args.image_sha
+    INSTANCE_TYPE=args.instance_type
     # FLAVOR = args.flavor
     # PYTHON_VERSION = args.python_version
     # PYTORCH_VERSION = args.pytorch_version

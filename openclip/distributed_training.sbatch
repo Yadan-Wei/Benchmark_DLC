@@ -43,9 +43,9 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 #########################
 
 declare -a ARGS=(
-    --container-image ${IMAGE_DIR}/${TAG}.sqsh
+    --container-image ${IMAGE_DIR}/${IMAGE_TYPE}_${TAG}.sqsh
     --container-mounts $FSX_MOUNT
-    --container-name openclip-training-${TAG}
+    --container-name openclip-training-${IMAGE_TYPE}-${TAG}
 )
 
 #####################
@@ -72,6 +72,7 @@ declare -a TORCHRUN_ARGS=(
     --rdzv_id=$SLURM_JOB_ID
     --rdzv_backend=c10d
     --rdzv_endpoint=$(hostname)
+    --master_port=$(comm -23 <(seq 50000 65536  | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
 )
 
 

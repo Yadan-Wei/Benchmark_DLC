@@ -1,19 +1,7 @@
 #!/bin/bash
 
-set -ex
+set -exo pipefail
 
-# export REGISTRY="763104351884.dkr.ecr.us-west-2.amazonaws.com"
-# export REPO="pytorch-training"
-# export TAG="2.4.0-gpu-py311-cu124-ubuntu22.04-ec2"
-# export IMAGE="${REGISTRY}/${REPO}:${TAG}"
-# export DATA_DIR="/fsx/dataset"
-# export IMAGE_DIR="$(pwd)/images"
-# export METRICS_DIR_PATH="$(pwd)/logs"
-
-# MODELS=(
-#         #"megatron-lm",
-#         "openclip"
-#         )
 
 . config.sh
 
@@ -26,15 +14,19 @@ mkdir -p $IMAGE_DIR
 # clean up old log
 rm -rf $METRICS_DIR_PATH/*
 
+# remove old image, disable in test to save time
+# rm -rf $IMAGE_DIR/*
+
 # Loop through each image source in the config
 
-for image_type in "${IMAGE_SOURCE[@]}"; do
-    get_image_info "$image_type"
+for IMAGE_TYPE in "${IMAGE_SOURCE[@]}"; do
+    get_image_info "$IMAGE_TYPE"
     if [ $? -ne 0 ]; then
-        echo "Error setting variables for $image_type"
+        echo "Error setting variables for $IMAGE_TYPE"
         continue
     fi
     export IMAGE="${REGISTRY}/${REPO}:${TAG}"
+    export IMAGE_TYPE
 
     echo "Running training with:"
     echo "IMAGE: $IMAGE"
@@ -43,7 +35,8 @@ for image_type in "${IMAGE_SOURCE[@]}"; do
     bash pull_image.sh
 
     # for DLC get the image sha 
-    if [ $image_type="DLC" ];  then
+    if [ "${IMAGE_TYPE}" = "DLC" ];  then
+
         # login the registry
         aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${REGISTRY}
 
@@ -65,7 +58,7 @@ for image_type in "${IMAGE_SOURCE[@]}"; do
             exit 1
         fi
     else
-        IMAGE_SHA=""
+        IMAGE_SHA="N/A"
     fi
 
    
@@ -86,18 +79,19 @@ done
 # get the result job list and display json file on cloudwatch
 # ===================================================
 
-job_ids=()
+# get all process training result job list as dependency of send to cloudwatch job
+proess_result_job_ids=()
 while read -r job_id; do
-    job_ids+=("$job_id")
-done < ${METRICS_DIR_PATH}/job_list.txt
+    proess_result_job_ids+=("$job_id")
+done < ${METRICS_DIR_PATH}/process_res_job_list.txt
 
 # Join job IDs into a comma-separated string
-dep_string=$(IFS=','; echo "${job_ids[*]}")
+dep_string=$(IFS=','; echo "${proess_result_job_ids[*]}")
 
 cd cloudwatch
 
 # Submit an sbatch job with dependencies
-sbatch --parsable --dependency=afterany:"${dep_string}" --kill-on-invalid-dep=yes job_send_cw.sh
+sbatch --dependency=afterany:"${dep_string}" --kill-on-invalid-dep=yes --output ${METRICS_DIR_PATH}/send_to_cw_%j.out job_send_cw.sh
 
 # ===================================================
 # clean up

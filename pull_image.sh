@@ -12,8 +12,8 @@ cd $WORK_DIRECTORY
 echo "Pull and squash ${IMAGE}."
 
 # import and squash image
-if [ ! -e "${TAG}.sqsh" ]; then
-    enroot import -o "${TAG}.sqsh" "docker://${IMAGE}"
+if [ ! -e "${IMAGE_TYPE}_${TAG}.sqsh" ]; then
+    enroot import -o "${IMAGE_TYPE}_${TAG}.sqsh" "docker://${IMAGE}"
 fi
 
 echo "Pull and squash finished."

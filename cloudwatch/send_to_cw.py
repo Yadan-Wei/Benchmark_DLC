@@ -45,8 +45,8 @@ def generate_table_rows(metrics_dir_path):
             experiment_row = [
                 data['model']['name'],
                 round(data['model']['perf_metrics']['throughput']),
-                data['model']['perf_metrics']['measure']
-                data['image']
+                data['model']['perf_metrics']['measure'],
+                data['image'],
                 data['image_sha']
             ]
            
@@ -78,7 +78,7 @@ def update_dashboard(job_name, table_rows):
     markdown = md.dumps(
         md.h1(job_name) + \
         [""] + \
-        md.h3("Benchmark Setting") + \
+        md.h3("Configuration") + \
         md.table(
             # . just for table pretty 
             headers=["Instance","Nodes"],

@@ -61,9 +61,9 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 #########################
 
 declare -a ARGS=(
-    --container-image ${IMAGE_DIR}/${TAG}.sqsh
+    --container-image ${IMAGE_DIR}/${IMAGE_TYPE}_${TAG}.sqsh
     --container-mounts $FSX_MOUNT
-    --container-name megatron-training-${TAG}
+    --container-name megatron-training-${IMAGE_TYPE}-${TAG}
 )
 
 #####################
@@ -79,6 +79,8 @@ srun -l "${ARGS[@]}" \
          python -m pip install .
      "
 
+
+
 declare -a TORCHRUN_ARGS=(
     # change this to match the number of gpus per node:
     --nproc_per_node=8
@@ -86,6 +88,7 @@ declare -a TORCHRUN_ARGS=(
     --rdzv_id=$SLURM_JOB_ID
     --rdzv_backend=c10d
     --rdzv_endpoint=$(hostname)
+    --master_port=$(comm -23 <(seq 50000 65536  | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
 )
 
 declare -a MEGATRON_ARGS=(
